@@ -40,6 +40,8 @@ import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoa
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
 import org.springframework.cloud.task.batch.partition.DeployerStepExecutionHandler;
+import org.springframework.cloud.task.batch.partition.EnvironmentVariablesProvider;
+import org.springframework.cloud.task.batch.partition.NoOpEnvironmentVariablesProvider;
 import org.springframework.cloud.task.batch.partition.SimpleEnvironmentVariablesProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -88,7 +90,7 @@ public class JobConfiguration {
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
-		Resource resource = resourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.BUILD-SNAPSHOT");
+		Resource resource = resourceLoader.getResource("https://github.com/cppwfs/binary/raw/master/task-cf.jar");
 
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
@@ -97,7 +99,8 @@ public class JobConfiguration {
 
 		SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
 		environmentVariablesProvider.setEnvironmentProperties(environmentProperties);
-		partitionHandler.setEnvironmentVariablesProvider(environmentVariablesProvider);
+		//using NO-OP as a diagnostic. should use environment variables.
+		partitionHandler.setEnvironmentVariablesProvider(new NoOpEnvironmentVariablesProvider());
 
 		partitionHandler.setMaxWorkers(2);
 
