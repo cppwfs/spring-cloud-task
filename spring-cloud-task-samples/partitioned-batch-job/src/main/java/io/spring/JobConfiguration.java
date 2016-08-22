@@ -37,8 +37,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
-import org.springframework.cloud.deployer.spi.local.LocalDeployerProperties;
-import org.springframework.cloud.deployer.spi.local.LocalTaskLauncher;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
 import org.springframework.cloud.task.batch.partition.DeployerStepExecutionHandler;
@@ -86,15 +84,6 @@ public class JobConfiguration {
 		jobExplorerFactoryBean.setDataSource(this.dataSource);
 
 		return jobExplorerFactoryBean;
-	}
-
-	@Bean
-	public TaskLauncher taskLauncher() {
-		LocalDeployerProperties localDeployerProperties = new LocalDeployerProperties();
-
-		localDeployerProperties.setDeleteFilesOnExit(false);
-
-		return new LocalTaskLauncher(localDeployerProperties);
 	}
 
 	@Bean

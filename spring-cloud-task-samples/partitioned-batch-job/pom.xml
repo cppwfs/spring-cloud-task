@@ -50,7 +50,8 @@
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-deployer-local</artifactId>
+			<artifactId>spring-cloud-deployer-cloudfoundry</artifactId>
+			<version>1.0.0.BUILD-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
