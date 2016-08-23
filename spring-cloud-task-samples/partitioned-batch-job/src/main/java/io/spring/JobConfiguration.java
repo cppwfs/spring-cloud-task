@@ -17,6 +17,7 @@ package io.spring;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
@@ -100,9 +101,9 @@ public class JobConfiguration {
 		SimpleEnvironmentVariablesProvider environmentVariablesProvider = new SimpleEnvironmentVariablesProvider(this.environment);
 		environmentVariablesProvider.setEnvironmentProperties(environmentProperties);
 		//using NO-OP as a diagnostic. should use environment variables.
-		partitionHandler.setEnvironmentVariablesProvider(new NoOpEnvironmentVariablesProvider());
-
-		partitionHandler.setMaxWorkers(2);
+//		partitionHandler.setEnvironmentVariablesProvider(new NoOpEnvironmentVariablesProvider());
+		partitionHandler.setEnvironmentVariablesProvider(environmentVariablesProvider);
+		partitionHandler.setMaxWorkers(1);
 
 		return partitionHandler;
 	}
@@ -167,7 +168,8 @@ public class JobConfiguration {
 	@Bean
 	@Profile("master")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
-		return jobBuilderFactory.get("partitionedJob")
+		Random random = new Random();
+		return jobBuilderFactory.get("partitionedJob"+random.nextInt())
 				.start(step1(partitionHandler))
 				.build();
 	}

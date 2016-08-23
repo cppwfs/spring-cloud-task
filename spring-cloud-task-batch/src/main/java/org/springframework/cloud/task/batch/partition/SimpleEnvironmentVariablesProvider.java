@@ -18,8 +18,10 @@ package org.springframework.cloud.task.batch.partition;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.core.env.AbstractEnvironment;
@@ -79,7 +81,19 @@ public class SimpleEnvironmentVariablesProvider implements EnvironmentVariablesP
 		}
 
 		for (String key : keys) {
-			currentEnvironment.put(key, this.environment.getProperty(key));
+			try {
+				currentEnvironment.put(key, this.environment.getProperty(key));
+			}
+			catch(Exception ex) {
+				System.out.println("IGNORING ==>" + key);
+				ex.printStackTrace();
+				LinkedHashMap myMap = this.environment.getProperty(key, LinkedHashMap.class);
+				for(Object myMapKey : myMap.keySet()) {
+					System.out.println("===>" + myMapKey);
+					System.out.println("===========>" + myMap.get(myMapKey));
+				}
+
+			}
 		}
 
 		return currentEnvironment;
