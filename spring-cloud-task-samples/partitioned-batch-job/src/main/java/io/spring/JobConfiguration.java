@@ -39,6 +39,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.deployer.resource.docker.DockerResourceLoader;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
@@ -50,7 +51,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.Resource;
 
 /**
@@ -93,20 +98,43 @@ public class JobConfiguration {
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
-		Resource resource = resourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.M2");
-
+		DockerResourceLoader dockerResourceLoader = new DockerResourceLoader();
+		Resource resource = dockerResourceLoader.getResource("docker:cppwfs/partition:latest");
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
 		List<String> commandLineArgs = new ArrayList<>(3);
-		commandLineArgs.add("--spring.profiles.active=worker");
-		commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
-		commandLineArgs.add("--spring.batch.initializer.enabled=false");
+//		commandLineArgs.add("--spring.profiles.active=worker");
+//		commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
+//		commandLineArgs.add("--spring.batch.initializer.enabled=false");
+//		commandLineArgs.add("--spring.datasource.username=spring");
+//		commandLineArgs.add("--spring.cloud.task.name=nnaaa");
+//		commandLineArgs.add("--spring.datasource.url=jdbc:mysql://192.168.65.131:5360/test");
+//		commandLineArgs.add("--spring.datasource.driverClassName=org.mariadb.jdbc.Driver");
+//		commandLineArgs.add("--spring.datasource.password=secret");
+//		commandLineArgs.add("--MESOS_MARAT HON_URI=http://m1.dcos/service/marathon");
+//		commandLineArgs.add("--MESOS_CHRONOS_URI=http://m1.dcos/service/chronos");
 		partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
-		partitionHandler.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
-		partitionHandler.setMaxWorkers(1);
-		partitionHandler.setApplicationName("PartitionedBatchJobTask");
+		partitionHandler.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(getBasicEnvironment()));//new NoOpEnvironmentVariablesProvider());
+		partitionHandler.setMaxWorkers(2);
+		partitionHandler.setApplicationName("pbjt");
 
 		return partitionHandler;
+	}
+
+	private Environment getBasicEnvironment() {
+		ConfigurableEnvironment environment = new StandardEnvironment();
+		MutablePropertySources propertySources = environment.getPropertySources();
+		Map myMap = new HashMap();
+		myMap.put("spring.profiles.active", "worker");
+		myMap.put("spring.cloud.task.initialize.enable", "false");
+		myMap.put("spring.batch.initializer.enabled", "false");
+		myMap.put("spring.datasource.username", "spring");
+		myMap.put("spring.cloud.task.name", "nnaaa");
+		myMap.put("spring.datasource.url", "jdbc:mysql://192.168.65.131:5360/test");
+		myMap.put("spring.datasource.driverClassName", "org.mariadb.jdbc.Driver");
+		myMap.put("spring.datasource.password", "secret");
+		propertySources.addFirst(new MapPropertySource("MY_MAP", myMap));
+		return environment;
 	}
 
 	@Bean
@@ -170,7 +198,7 @@ public class JobConfiguration {
 	@Profile("!worker")
 	public Job partitionedJob(PartitionHandler partitionHandler) throws Exception {
 		Random random = new Random();
-		return jobBuilderFactory.get("partitionedJob"+random.nextInt())
+		return jobBuilderFactory.get("pj")
 				.start(step1(partitionHandler))
 				.build();
 	}

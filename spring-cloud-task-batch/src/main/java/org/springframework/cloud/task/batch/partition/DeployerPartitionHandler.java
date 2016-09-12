@@ -15,11 +15,13 @@
  */
 package org.springframework.cloud.task.batch.partition;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -283,6 +285,14 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 						this.deploymentProperties,
 						arguments);
 
+		logger.debug("*******"+definition.getName());
+		try {
+			logger.debug("*******"+this.resource.getURI());
+			logger.debug(this.resource.toString());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 		taskLauncher.launch(request);
 	}
 

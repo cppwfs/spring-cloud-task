@@ -12,5 +12,6 @@ public class PartitionedBatchJobApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PartitionedBatchJobApplication.class, args);
+		System.out.println("Running");
 	}
 }
