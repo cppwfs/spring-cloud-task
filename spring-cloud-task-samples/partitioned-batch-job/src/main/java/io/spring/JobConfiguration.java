@@ -39,6 +39,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.deployer.resource.docker.DockerResourceLoader;
 import org.springframework.cloud.deployer.resource.support.DelegatingResourceLoader;
 import org.springframework.cloud.deployer.spi.task.TaskLauncher;
 import org.springframework.cloud.task.batch.partition.DeployerPartitionHandler;
@@ -93,18 +94,23 @@ public class JobConfiguration {
 
 	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
-		Resource resource = resourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.M1");
-
+		DockerResourceLoader dockerResourceLoader = new DockerResourceLoader();
+		Resource resource = dockerResourceLoader.getResource("docker:cppwfs/partition:latest");
 		DeployerPartitionHandler partitionHandler = new DeployerPartitionHandler(taskLauncher, jobExplorer, resource, "workerStep");
 
 		List<String> commandLineArgs = new ArrayList<>(3);
 		commandLineArgs.add("--spring.profiles.active=worker");
 		commandLineArgs.add("--spring.cloud.task.initialize.enable=false");
 		commandLineArgs.add("--spring.batch.initializer.enabled=false");
+		commandLineArgs.add("--spring.datasource.username=root");
+		commandLineArgs.add("--spring.cloud.task.name=nnaaa");
+		commandLineArgs.add("--spring.datasource.url=jdbc:mysql://<youraddress>:3306/practice");
+		commandLineArgs.add("--spring.datasource.driverClassName=org.mariadb.jdbc.Driver");
+		commandLineArgs.add("--spring.datasource.password=yourpassword");
 		partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
-		partitionHandler.setEnvironmentVariablesProvider(new SimpleEnvironmentVariablesProvider(this.environment));
+		partitionHandler.setEnvironmentVariablesProvider(new NoOpEnvironmentVariablesProvider());//new SimpleEnvironmentVariablesProvider(this.environment));
 		partitionHandler.setMaxWorkers(1);
-		partitionHandler.setApplicationName("PartitionedBatchJobTask");
+		partitionHandler.setApplicationName("part-task");
 
 		return partitionHandler;
 	}

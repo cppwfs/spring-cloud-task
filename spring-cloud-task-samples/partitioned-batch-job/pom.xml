@@ -52,8 +52,8 @@
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-deployer-local</artifactId>
-			<version>1.0.2.RELEASE</version>
+			<artifactId>spring-cloud-deployer-kubernetes</artifactId>
+			<version>1.0.3.BUILD-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -115,6 +115,34 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.14.2</version>
+				<configuration>
+					<images>
+						<image>
+							<name>cppwfs/partition</name>
+							<build>
+								<from>anapsix/alpine-java:8</from>
+								<volumes>
+									<volume>/tmp</volume>
+								</volumes>
+								<entryPoint>
+									<exec>
+										<arg>java</arg>
+										<arg>-jar</arg>
+										<arg>/maven/partition-task.jar</arg>
+									</exec>
+								</entryPoint>
+								<assembly>
+									<descriptor>assembly.xml</descriptor>
+								</assembly>
+							</build>
+						</image>
+					</images>
 				</configuration>
 			</plugin>
 		</plugins>
