@@ -104,13 +104,13 @@ public class JobConfiguration {
 		commandLineArgs.add("--spring.batch.initializer.enabled=false");
 		commandLineArgs.add("--spring.datasource.username=root");
 		commandLineArgs.add("--spring.cloud.task.name=nnaaa");
-		commandLineArgs.add("--spring.datasource.url=jdbc:mysql://<youraddress>:3306/practice");
+		commandLineArgs.add("--spring.datasource.url=jdbc:mysql://<mysqlhost>:3306/practice");
 		commandLineArgs.add("--spring.datasource.driverClassName=org.mariadb.jdbc.Driver");
 		commandLineArgs.add("--spring.datasource.password=yourpassword");
 		partitionHandler.setCommandLineArgsProvider(new PassThroughCommandLineArgsProvider(commandLineArgs));
 		partitionHandler.setEnvironmentVariablesProvider(new NoOpEnvironmentVariablesProvider());//new SimpleEnvironmentVariablesProvider(this.environment));
 		partitionHandler.setMaxWorkers(1);
-		partitionHandler.setApplicationName("part-task");
+		partitionHandler.setApplicationName("partitionedbatchjobtask");
 
 		return partitionHandler;
 	}

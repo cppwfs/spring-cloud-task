@@ -298,8 +298,7 @@ public class DeployerPartitionHandler implements PartitionHandler, EnvironmentAw
 
 	private String resolveApplicationName() {
 		if(StringUtils.hasText(this.applicationName)) {
-			Random rand = new Random();
-			return this.applicationName+rand.nextInt();
+			return this.applicationName;
 		}
 		else {
 			return this.taskExecution.getTaskName();
