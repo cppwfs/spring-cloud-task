@@ -56,7 +56,7 @@ public class TaskProcessorApplicationTests {
 			properties.put("payload", DEFAULT_PAYLOAD);
 			TaskLaunchRequest expectedRequest = new TaskLaunchRequest(
 					"maven://org.springframework.cloud.task.app:"
-					+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
+					+ "timestamp-task:jar:1.2.0.M2", null, properties,
 					null, null);
 			assertThat(collector.forChannel(channels.output()), receivesPayloadThat(is(expectedRequest)));
 		}

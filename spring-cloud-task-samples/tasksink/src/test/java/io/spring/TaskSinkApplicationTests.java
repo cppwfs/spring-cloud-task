@@ -59,7 +59,7 @@ public class TaskSinkApplicationTests {
 		properties.put("server.port", "0");
 		TaskLaunchRequest request = new TaskLaunchRequest(
 				"maven://org.springframework.cloud.task.app:"
-				+ "timestamp-task:jar:1.0.1.RELEASE", null, properties,
+				+ "timestamp-task:jar:1.2.0.M2", null, properties,
 				null, null);
 		GenericMessage<TaskLaunchRequest> message = new GenericMessage<TaskLaunchRequest>(request);
 		this.sink.input().send(message);

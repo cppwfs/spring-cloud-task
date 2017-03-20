@@ -52,7 +52,7 @@ public class TaskLauncherSinkTests {
 	private final static String PARAM2 = "BAR";
 
 	private final static String VALID_URL = "maven://org.springframework.cloud.task.app:"
-			+ "timestamp-task:jar:1.0.1.RELEASE";
+			+ "timestamp-task:jar:1.2.0.M2";
 
 	private final static String INVALID_URL = "maven://not.real.group:"
 			+ "invalid:jar:1.0.0.BUILD-SNAPSHOT";
