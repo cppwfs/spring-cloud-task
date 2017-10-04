@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
-import org.springframework.cloud.task.configuration.SimpleSingleTaskAutoConfiguration;
+import org.springframework.cloud.task.configuration.SimpleSingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SingleInstanceTaskListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {SimpleTaskConfiguration.class,
-		SimpleSingleTaskAutoConfiguration.class,
+		SimpleSingleTaskConfiguration.class,
 		EmbeddedDataSourceConfiguration.class})
 @TestPropertySource(properties = {
 		"spring.cloud.task.singleInstanceEnabled=true",
@@ -56,14 +56,6 @@ public class SimpleSingleTaskAutoConfigurationWithDataSourceTests {
 
 	@Test
 	public void testConfiguration() throws Exception {
-
-		LockRegistry lockRegistry = this.context.getBean(LockRegistry.class);
-
-		assertNotNull("lockRegistry should not be null", lockRegistry);
-
-		Class<?> targetClass = AopProxyUtils.ultimateTargetClass(lockRegistry);
-
-		assertEquals(targetClass, JdbcLockRegistry.class);
 
 		SingleInstanceTaskListener singleInstanceTaskListener = this.context.getBean(SingleInstanceTaskListener.class);
 

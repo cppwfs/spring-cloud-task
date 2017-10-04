@@ -21,18 +21,11 @@ import java.util.Collection;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskNameResolver;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.jdbc.lock.DefaultLockRepository;
-import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
-import org.springframework.integration.jdbc.lock.LockRepository;
-import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.integration.support.locks.PassThruLockRegistry;
 import org.springframework.util.CollectionUtils;
 
@@ -45,7 +38,7 @@ import org.springframework.util.CollectionUtils;
 
 @Configuration
 @ConditionalOnProperty(prefix = "spring.cloud.task", name = "singleInstanceEnabled")
-public class SimpleSingleTaskAutoConfiguration {
+public class SimpleSingleTaskConfiguration {
 
 	@Autowired(required = false)
 	Collection<DataSource> dataSources;
@@ -57,30 +50,20 @@ public class SimpleSingleTaskAutoConfiguration {
 	private SimpleTaskNameResolver taskNameResolver;
 
 	@Autowired
-	private TaskRepository taskRepository;
-
-	@Autowired
 	private ConfigurableApplicationContext context;
 
-	@Bean
-	@ConditionalOnMissingBean
-	public LockRegistry lockRegistry() {
-		if (CollectionUtils.isEmpty(this.dataSources)) {
-			return new PassThruLockRegistry();
-		}
-		verifyEnvironment();
-		DefaultLockRepository lockRepository = new DefaultLockRepository(this.dataSources.iterator().next());
-		lockRepository.setPrefix(taskProperties.getTablePrefix());
-		lockRepository.setTimeToLive(taskProperties.getSingleInstanceLockTtl());
-		lockRepository.afterPropertiesSet();
-		return new JdbcLockRegistry(lockRepository);
-	}
 
 	@Bean
-	public SingleInstanceTaskListener taskListener(LockRegistry lockRegistry) {
-		return new SingleInstanceTaskListener(lockRegistry,
+	public SingleInstanceTaskListener taskListener() {
+		if (CollectionUtils.isEmpty(this.dataSources)) {
+			return new SingleInstanceTaskListener(new PassThruLockRegistry(),
+					this.taskNameResolver);
+		}
+
+		verifyEnvironment();
+		return new SingleInstanceTaskListener(dataSources.iterator().next(),
 				this.taskNameResolver,
-				this.taskRepository);
+				this.taskProperties);
 	}
 
 	private void verifyEnvironment(){

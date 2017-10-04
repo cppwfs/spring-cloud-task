@@ -16,8 +16,9 @@
 
 package org.springframework.cloud.task.configuration;
 
-import java.util.Date;
 import java.util.concurrent.locks.Lock;
+
+import javax.sql.DataSource;
 
 import org.springframework.cloud.task.listener.TaskExecutionException;
 import org.springframework.cloud.task.listener.annotation.AfterTask;
@@ -25,7 +26,8 @@ import org.springframework.cloud.task.listener.annotation.BeforeTask;
 import org.springframework.cloud.task.listener.annotation.FailedTask;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskNameResolver;
-import org.springframework.cloud.task.repository.TaskRepository;
+import org.springframework.integration.jdbc.lock.DefaultLockRepository;
+import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
 
 /**
@@ -44,13 +46,21 @@ public class SingleInstanceTaskListener {
 
 	private TaskNameResolver taskNameResolver;
 
-	private TaskRepository taskRepository;
-
 	public SingleInstanceTaskListener(LockRegistry lockRegistry,
-			TaskNameResolver taskNameResolver, TaskRepository taskRepository) {
+			TaskNameResolver taskNameResolver) {
 		this.lockRegistry = lockRegistry;
 		this.taskNameResolver = taskNameResolver;
-		this.taskRepository = taskRepository;
+	}
+
+	public SingleInstanceTaskListener(DataSource dataSource,
+			TaskNameResolver taskNameResolver,
+			TaskProperties taskProperties) {
+		DefaultLockRepository lockRepository = new DefaultLockRepository(dataSource);
+		lockRepository.setPrefix(taskProperties.getTablePrefix());
+		lockRepository.setTimeToLive(taskProperties.getSingleInstanceLockTtl());
+		lockRepository.afterPropertiesSet();
+		this.lockRegistry = new JdbcLockRegistry(lockRepository);
+		this.taskNameResolver = taskNameResolver;
 	}
 
 	@BeforeTask
@@ -60,8 +70,6 @@ public class SingleInstanceTaskListener {
 			String errorMessage = String.format(
 					"Task with name \"%s\" is already running.",
 					this.taskNameResolver.getTaskName());
-			taskRepository.completeTaskExecution(taskExecution.getExecutionId(),
-					1, new Date(), "", errorMessage);
 			throw new TaskExecutionException(errorMessage);
 		}
 	}
