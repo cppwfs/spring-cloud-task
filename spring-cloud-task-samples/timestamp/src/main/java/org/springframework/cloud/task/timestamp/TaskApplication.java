@@ -62,6 +62,7 @@ public class TaskApplication {
 		@Override
 		public void run(String... strings) throws Exception {
 			DateFormat dateFormat = new SimpleDateFormat(config.getFormat());
+			Thread.sleep(10000);
 			logger.info(dateFormat.format(new Date()));
 		}
 	}

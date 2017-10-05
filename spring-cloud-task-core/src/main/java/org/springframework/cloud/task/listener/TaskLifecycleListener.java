@@ -87,6 +87,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private boolean finished = false;
 
+	private boolean listenerFailed = false;
+
+
 	private TaskNameResolver taskNameResolver;
 
 	private ApplicationArguments applicationArguments;
@@ -149,13 +152,16 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private void doTaskEnd() {
-		if(this.started && !this.finished) {
+		if((listenerFailed || this.started) && !this.finished) {
 			this.taskExecution.setEndTime(new Date());
 
 			if(this.exitCodeEvent != null) {
 				this.taskExecution.setExitCode(exitCodeEvent.getExitCode());
 			}
 			else if(this.applicationFailedEvent != null){
+				this.taskExecution.setExitCode(1);
+			}
+			else if(listenerFailed) {
 				this.taskExecution.setExitCode(1);
 			}
 			else{
@@ -170,7 +176,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 				taskExecution.setExitMessage(invokeOnTaskError(taskExecution,
 						this.applicationFailedEvent.getException()).getExitMessage());
 			}
-			taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
+			if(!listenerFailed) {
+				taskExecution.setExitMessage(invokeOnTaskEnd(taskExecution).getExitMessage());
+			}
 			taskRepository.completeTaskExecution(taskExecution.getExecutionId(), taskExecution.getExitCode(),
 					taskExecution.getEndTime(), taskExecution.getExitMessage(), taskExecution.getErrorMessage());
 
@@ -227,7 +235,17 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (taskExecutionListeners != null) {
 			for (TaskExecutionListener taskExecutionListener : taskExecutionListeners) {
-				taskExecutionListener.onTaskStartup(listenerTaskExecution);
+				try {
+					taskExecutionListener.onTaskStartup(listenerTaskExecution);
+				}
+				catch (Exception tee) {
+					System.out.println("WELL HERE WE ARE");
+					this.listenerFailed = true;
+					this.taskExecution.setErrorMessage(tee.getMessage());
+					this.taskExecution.setExitCode(1);
+					this.taskExecution.setExitMessage(tee.getMessage());
+					throw tee;
+				}
 			}
 		}
 		return listenerTaskExecution;
