@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.launcher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,12 @@ public class TaskLauncherSink {
 
 	@Autowired
 	private DelegatingResourceLoader resourceLoader;
+
+	private ObjectMapper objectMapper;
+
+	public TaskLauncherSink() {
+		this.objectMapper = new ObjectMapper();
+	}
 
 	/**
 	 * Launches a task upon the receipt of a valid TaskLaunchRequest.
