@@ -82,15 +82,6 @@ public class JobConfiguration {
 	private static final int GRID_SIZE = 4;
 
 	@Bean
-	public JobExplorerFactoryBean jobExplorer() {
-		JobExplorerFactoryBean jobExplorerFactoryBean = new JobExplorerFactoryBean();
-
-		jobExplorerFactoryBean.setDataSource(this.dataSource);
-
-		return jobExplorerFactoryBean;
-	}
-
-	@Bean
 	public PartitionHandler partitionHandler(TaskLauncher taskLauncher, JobExplorer jobExplorer) throws Exception {
 		Resource resource = resourceLoader.getResource("maven://io.spring.cloud:partitioned-batch-job:1.1.0.RELEASE");
 

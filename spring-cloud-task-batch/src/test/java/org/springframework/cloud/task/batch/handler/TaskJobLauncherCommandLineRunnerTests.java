@@ -39,6 +39,8 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -65,7 +67,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 
 	@Test
 	public void testTaskJobLauncherCLRSuccessFail() {
-		String[] enabledArgs = new String[] { "--spring.cloud.task.batch.failOnJobFailure=true" };
+		String[] enabledArgs = new String[] {
+				"--spring.cloud.task.batch.failOnJobFailure=true",
+				"--spring.batch.job.enabled=false"};
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
@@ -74,7 +78,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 							EmbeddedDataSourceConfiguration.class,
 							BatchAutoConfiguration.class,
 							TaskBatchAutoConfiguration.class,
-							TaskJobLauncherAutoConfiguration.class }, enabledArgs);
+							TaskJobLauncherAutoConfiguration.class,
+							SingleTaskConfiguration.class,
+							SimpleTaskConfiguration.class }, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -86,7 +92,8 @@ public class TaskJobLauncherCommandLineRunnerTests {
 	public void testTaskJobLauncherPickOneJob() {
 		String[] enabledArgs = new String[] {
 				"--spring.cloud.task.batch.failOnJobFailure=true",
-				"--spring.cloud.task.batch.jobNames=jobSucceed" };
+				"--spring.cloud.task.batch.jobNames=jobSucceed",
+				"--spring.batch.job.enabled=false" };
 		boolean isExceptionThrown = false;
 		try {
 			this.applicationContext = SpringApplication
@@ -95,7 +102,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 							EmbeddedDataSourceConfiguration.class,
 							BatchAutoConfiguration.class,
 							TaskBatchAutoConfiguration.class,
-							TaskJobLauncherAutoConfiguration.class }, enabledArgs);
+							TaskJobLauncherAutoConfiguration.class,
+							SingleTaskConfiguration.class,
+							SimpleTaskConfiguration.class }, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -113,7 +122,9 @@ public class TaskJobLauncherCommandLineRunnerTests {
 						EmbeddedDataSourceConfiguration.class,
 						BatchAutoConfiguration.class,
 						TaskBatchAutoConfiguration.class,
-						TaskJobLauncherAutoConfiguration.class }, enabledArgs);
+						TaskJobLauncherAutoConfiguration.class,
+						SingleTaskConfiguration.class,
+						SimpleTaskConfiguration.class }, enabledArgs);
 		validateContext();
 		assertThat(applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
 		boolean exceptionThrown = false;

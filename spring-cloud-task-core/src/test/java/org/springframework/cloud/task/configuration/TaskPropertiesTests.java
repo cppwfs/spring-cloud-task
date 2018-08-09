@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-		TaskPropertiesTests.CloseContextEnabledTest.class,
+		TaskPropertiesTests.CloseContextEnabledTest.class
 		
 })
 
@@ -36,7 +36,7 @@ public class TaskPropertiesTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@SpringBootTest(classes={TaskPropertiesTests.Config.class}, properties = { "spring.cloud.task.closecontextEnabled=false" })
+	@SpringBootTest(classes={TaskPropertiesTests.Config.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class}, properties = { "spring.cloud.task.closecontextEnabled=false" })
 	@DirtiesContext
 	public static class CloseContextEnabledTest extends TaskPropertiesTests {}
 	
@@ -44,13 +44,6 @@ public class TaskPropertiesTests {
 	@Configuration
 	@EnableTask
 	public static class Config {
-		@Bean
-		TaskExecutionDaoFactoryBean taskExecutionDaoFactoryBean() {
-			return new TaskExecutionDaoFactoryBean();
-		}
-		@Bean
-		public TaskRepository taskRepository(TaskExecutionDaoFactoryBean tefb) {
-			return new SimpleTaskRepository(tefb);
-		}
+
 	}
 }

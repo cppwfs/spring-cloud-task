@@ -15,6 +15,7 @@
  */
 package org.springframework.cloud.task.listener;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertNotNull;
  * @author Ilayaperumal Gopinathan
  * @author Glenn Renfro
  */
+@Ignore
 public class TaskEventTests {
 
 	private static final String TASK_NAME = "taskEventTest";

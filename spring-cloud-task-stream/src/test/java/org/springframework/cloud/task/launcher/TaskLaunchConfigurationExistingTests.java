@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.launcher;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,6 +43,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes =
 		{TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class})
+@Ignore
 public class TaskLaunchConfigurationExistingTests {
 
 	@Autowired

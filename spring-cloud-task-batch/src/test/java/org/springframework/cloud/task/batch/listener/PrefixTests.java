@@ -33,6 +33,8 @@ import org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +64,9 @@ public class PrefixTests {
 				JobConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class,
 				BatchAutoConfiguration.class,
-				TaskBatchAutoConfiguration.class }, new String[] { "--spring.cloud.task.tablePrefix=FOO_" });
+				TaskBatchAutoConfiguration.class,
+				SimpleTaskConfiguration.class,
+				SingleTaskConfiguration.class}, new String[] { "--spring.cloud.task.tablePrefix=FOO_" });
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
 

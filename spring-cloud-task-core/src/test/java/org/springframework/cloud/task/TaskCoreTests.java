@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +50,7 @@ public class TaskCoreTests {
 
 	@Test
 	public void successfulTaskTest() {
-		applicationContext = new SpringApplicationBuilder().sources(new Class[]{TaskConfiguration.class,
+		applicationContext = new SpringApplicationBuilder().sources(new Class[]{TaskConfiguration.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class}).build().run(new String[]{
 				"--spring.cloud.task.closecontext.enable=false",
 				"--spring.cloud.task.name=" + TASK_NAME,
@@ -67,7 +69,7 @@ public class TaskCoreTests {
 	public void exceptionTaskTest() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class,
+			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class,
 					PropertyPlaceholderAutoConfiguration.class).build().run(new String[]{
 					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
@@ -95,7 +97,7 @@ public class TaskCoreTests {
 	public void invalidExecutionId() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class,
+			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class,
 					PropertyPlaceholderAutoConfiguration.class).build().run(new String[]{
 					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,

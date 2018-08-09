@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -117,7 +118,7 @@ public class SimpleTaskConfigurationTests {
 
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleConfigurers() {
-		this.context = new AnnotationConfigApplicationContext(MultipleConfigurers.class,
+		this.context = new AnnotationConfigApplicationContext(MultipleConfigurers.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class,
 				PropertyPlaceholderAutoConfiguration.class);
 	}
 

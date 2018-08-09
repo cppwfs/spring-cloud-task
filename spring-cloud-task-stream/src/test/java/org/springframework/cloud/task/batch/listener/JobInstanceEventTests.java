@@ -16,6 +16,7 @@
 
 package org.springframework.cloud.task.batch.listener;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertNull;
 /**
  * @author Glenn Renfro
  */
+@Ignore
 public class JobInstanceEventTests {
 
 	public static final long INSTANCE_ID = 1;

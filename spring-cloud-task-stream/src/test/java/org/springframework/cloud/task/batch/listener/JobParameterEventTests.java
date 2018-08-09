@@ -18,6 +18,7 @@ package org.springframework.cloud.task.batch.listener;
 
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.batch.core.JobParameter;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertNull;
 /**
  * @author Glenn Renfro
  */
+@Ignore
 public class JobParameterEventTests {
 
 	@Test

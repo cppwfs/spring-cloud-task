@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.batch.core.BatchStatus;
@@ -55,6 +56,7 @@ import static org.junit.Assert.assertTrue;
  * @author Glenn Renfro.
  * @author Ali Shahbour
  */
+@Ignore
 public class JobExecutionEventTests {
 
 	private static final String JOB_NAME = "FOODJOB";

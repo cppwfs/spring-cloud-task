@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.batch.core.JobExecution;
@@ -41,6 +42,7 @@ import static org.junit.Assert.assertEquals;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
+@Ignore
 public class EventListenerTests {
 
 	private QueueChannel queueChannel;

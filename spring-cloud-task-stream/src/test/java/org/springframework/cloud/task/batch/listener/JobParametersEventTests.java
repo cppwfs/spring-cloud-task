@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.batch.core.JobParameter;
@@ -35,6 +36,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Glenn Renfro
  */
+@Ignore
 public class JobParametersEventTests {
 
 	private final static JobParameter STRING_PARAM = new JobParameter("FOO", true);

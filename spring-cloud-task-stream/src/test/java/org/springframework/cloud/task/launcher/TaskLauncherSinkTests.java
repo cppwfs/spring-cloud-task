@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
+@Ignore
 public class TaskLauncherSinkTests {
 
 	private final static String TASK_NAME_PREFIX = "Task-";
