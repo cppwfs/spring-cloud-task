@@ -20,6 +20,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SingleInstanceTaskListener;
@@ -39,23 +43,23 @@ import static org.junit.Assert.assertNotNull;
  * @author Glenn Renfro
  * @since 2.0.0
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TaskProperties.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class})
-@TestPropertySource(properties = {
-		"spring.cloud.task.singleInstanceEnabled=true",
-})
 public class SimpleSingleTaskAutoConfigurationTests {
-	@Autowired
-	private ConfigurableApplicationContext context;
 
 	@Test
 	public void testConfiguration() throws Exception {
 
-		SingleInstanceTaskListener singleInstanceTaskListener = this.context.getBean(SingleInstanceTaskListener.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withPropertyValues("spring.cloud.task.singleInstanceEnabled=true");
+		applicationContextRunner.run((context) -> {
+		SingleInstanceTaskListener singleInstanceTaskListener = context.getBean(SingleInstanceTaskListener.class);
 
 		assertNotNull("singleInstanceTaskListener should not be null", singleInstanceTaskListener);
 
-		assertEquals(singleInstanceTaskListener.getClass(), SingleInstanceTaskListener.class);
+		assertEquals(singleInstanceTaskListener.getClass(), SingleInstanceTaskListener.class);});
 
 	}
 
