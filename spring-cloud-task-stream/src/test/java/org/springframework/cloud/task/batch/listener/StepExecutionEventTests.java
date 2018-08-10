@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Glenn Renfro
  */
-@Ignore
+
 public class StepExecutionEventTests {
 	private static final String JOB_NAME = "FOO_JOB";
 	private static final String STEP_NAME = "STEP_NAME";

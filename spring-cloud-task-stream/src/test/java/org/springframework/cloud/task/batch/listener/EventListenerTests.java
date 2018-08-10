@@ -42,7 +42,6 @@ import static org.junit.Assert.assertEquals;
  * @author Glenn Renfro
  * @author Ali Shahbour
  */
-@Ignore
 public class EventListenerTests {
 
 	private QueueChannel queueChannel;

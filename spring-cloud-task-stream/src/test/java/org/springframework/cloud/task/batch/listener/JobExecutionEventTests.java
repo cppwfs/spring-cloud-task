@@ -37,12 +37,19 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 
+import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.configuration.EnableTask;
+import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
+import org.springframework.cloud.task.listener.TaskEventAutoConfiguration;
+import org.springframework.cloud.task.listener.TaskEventTests;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -56,7 +63,6 @@ import static org.junit.Assert.assertTrue;
  * @author Glenn Renfro.
  * @author Ali Shahbour
  */
-@Ignore
 public class JobExecutionEventTests {
 
 	private static final String JOB_NAME = "FOODJOB";
@@ -281,7 +287,9 @@ public class JobExecutionEventTests {
 				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
-								TestSupportBinderAutoConfiguration.class},
+								TestSupportBinderAutoConfiguration.class,
+								SimpleTaskConfiguration.class,
+								SingleTaskConfiguration.class},
 						new String[]{"--spring.cloud.task.closecontext_enabled=false",
 								"--spring.main.web-environment=false",
 								"--spring.cloud.task.batch.events.chunk-order=5",
@@ -299,21 +307,51 @@ public class JobExecutionEventTests {
 	}
 
 	private void testDisabledConfiguration(String property, String disabledListener) {
-		boolean exceptionThrown = false;
+//		boolean exceptionThrown = false;
 		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
-		ConfigurableApplicationContext applicationContext =
-				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
+//		ConfigurableApplicationContext applicationContext =
+//				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
+//								EventJobExecutionConfiguration.class,
+//								PropertyPlaceholderAutoConfiguration.class,
+//								TestSupportBinderAutoConfiguration.class,
+//								SimpleTaskConfiguration.class,
+//								SingleTaskConfiguration.class},
+//						new String[]{"--spring.cloud.task.closecontext_enabled=false",
+//								"--spring.main.web-environment=false",
+//								disabledPropertyArg});
+//
+//		for (String beanName : LISTENER_BEAN_NAMES) {
+//			if (disabledListener != null && disabledListener.equals(beanName)) {
+//				try {
+//					applicationContext.getBean(disabledListener);
+//				}
+//				catch (NoSuchBeanDefinitionException nsbde) {
+//					exceptionThrown = true;
+//				}
+//				assertTrue(String.format("Did not expect %s bean in context", beanName), exceptionThrown);
+//			}
+//			else {
+//				applicationContext.getBean(beanName);
+//			}
+//		}
+//		applicationContext.getBean(BatchEventAutoConfiguration.BatchEventsChannels.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
-								TestSupportBinderAutoConfiguration.class},
-						new String[]{"--spring.cloud.task.closecontext_enabled=false",
-								"--spring.main.web-environment=false",
-								disabledPropertyArg});
-
+								TestSupportBinderAutoConfiguration.class,
+								SimpleTaskConfiguration.class,
+								SingleTaskConfiguration.class))
+				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
+						"--spring.main.web-environment=false",
+						disabledPropertyArg);
+		applicationContextRunner.run((context) -> {
+			boolean exceptionThrown = false;
 		for (String beanName : LISTENER_BEAN_NAMES) {
 			if (disabledListener != null && disabledListener.equals(beanName)) {
 				try {
-					applicationContext.getBean(disabledListener);
+					context.getBean(disabledListener);
 				}
 				catch (NoSuchBeanDefinitionException nsbde) {
 					exceptionThrown = true;
@@ -321,10 +359,11 @@ public class JobExecutionEventTests {
 				assertTrue(String.format("Did not expect %s bean in context", beanName), exceptionThrown);
 			}
 			else {
-				applicationContext.getBean(beanName);
+				context.getBean(beanName);
 			}
 		}
-		applicationContext.getBean(BatchEventAutoConfiguration.BatchEventsChannels.class);
+		});
+
 	}
 
 

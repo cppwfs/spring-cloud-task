@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNull;
 /**
  * @author Glenn Renfro
  */
-@Ignore
+
 public class JobParameterEventTests {
 
 	@Test

@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
+
 public class TaskBatchEventListenerBeanPostProcessorTests {
 
 	@MockBean

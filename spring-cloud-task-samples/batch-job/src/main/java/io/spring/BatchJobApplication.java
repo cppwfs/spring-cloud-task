@@ -18,6 +18,6 @@ public class BatchJobApplication {
 
 	public static void main(String[] args) {
 		//SpringApplication.run(BatchJobApplication.class, args); //works
-		new SpringApplicationBuilder().sources(new Class[]{JobConfiguration.class}).build().run(args); //ehh not so much
+		new SpringApplicationBuilder().sources(new Class[]{BatchJobApplication.class, JobConfiguration.class}).build().run(args); //ehh not so much
 	}
 }

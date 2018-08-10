@@ -27,7 +27,6 @@ import static org.junit.Assert.assertNull;
 /**
  * @author Glenn Renfro
  */
-@Ignore
 public class JobInstanceEventTests {
 
 	public static final long INSTANCE_ID = 1;

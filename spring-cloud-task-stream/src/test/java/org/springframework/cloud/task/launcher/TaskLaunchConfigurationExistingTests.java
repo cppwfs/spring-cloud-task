@@ -43,7 +43,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes =
 		{TaskLaunchConfigurationExistingTests.TestTaskDeployerConfiguration.class})
-@Ignore
+
 public class TaskLaunchConfigurationExistingTests {
 
 	@Autowired

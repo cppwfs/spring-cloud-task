@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Glenn Renfro
  */
-@Ignore
+
 public class JobParametersEventTests {
 
 	private final static JobParameter STRING_PARAM = new JobParameter("FOO", true);

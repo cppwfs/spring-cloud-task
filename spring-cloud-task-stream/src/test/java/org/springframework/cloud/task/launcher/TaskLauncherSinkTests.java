@@ -42,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TaskLauncherSinkApplication.class, TaskConfiguration.class} )
-@Ignore
+
 public class TaskLauncherSinkTests {
 
 	private final static String TASK_NAME_PREFIX = "Task-";
