@@ -42,15 +42,12 @@ public class TaskEventAutoConfiguration {
 	@EnableBinding(TaskEventChannels.class)
 	public static class ListenerConfiguration {
 
-		@Autowired
-		private TaskEventChannels taskEventChannels;
-
 		@Bean
 		public GatewayProxyFactoryBean taskEventListener() {
 			GatewayProxyFactoryBean factoryBean =
 					new GatewayProxyFactoryBean(TaskExecutionListener.class);
 
-			factoryBean.setDefaultRequestChannel(taskEventChannels.taskEvents());
+			factoryBean.setDefaultRequestChannelName(TaskEventChannels.TASK_EVENTS);
 
 			return factoryBean;
 		}

@@ -120,7 +120,6 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webflux</artifactId>
-				<version>5.0.7.RELEASE</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

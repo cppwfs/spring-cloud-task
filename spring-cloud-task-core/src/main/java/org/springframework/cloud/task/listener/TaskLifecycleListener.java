@@ -43,6 +43,7 @@ import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.Lifecycle;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.util.Assert;
@@ -282,7 +283,12 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		if (this.taskExecutionListeners != null) {
 			try {
 				for (TaskExecutionListener taskExecutionListener : this.taskExecutionListeners) {
-					taskExecutionListener.onTaskEnd(listenerTaskExecution);
+//TODO Added this to make sure that the taskExecutionListener is still running before trying to call it.
+//Need to verify that it works, because taskExecutionListener is not a lifecycle.   This code may  only be here to support
+//the TaskEventTests
+					if (taskExecutionListener instanceof Lifecycle && ((Lifecycle)taskExecutionListener).isRunning()) {
+						taskExecutionListener.onTaskEnd(listenerTaskExecution);
+					}
 				}
 			}
 			catch (Throwable listenerException) {

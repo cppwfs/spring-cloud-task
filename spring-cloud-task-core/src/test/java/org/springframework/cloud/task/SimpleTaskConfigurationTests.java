@@ -16,8 +16,6 @@
 
 package org.springframework.cloud.task;
 
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import org.junit.After;
@@ -30,25 +28,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
-import org.springframework.cloud.task.configuration.TaskProperties;
 import org.springframework.cloud.task.repository.TaskExplorer;
 import org.springframework.cloud.task.repository.TaskRepository;
 import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.PropertiesPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -70,79 +68,100 @@ public class SimpleTaskConfigurationTests {
 
 	@Test
 	public void testRepository() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(SimpleTaskConfiguration.class,
-			PropertyPlaceholderAutoConfiguration.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class));
+		applicationContextRunner.run((context) -> {
 
-		TaskRepository taskRepository = this.context.getBean(TaskRepository.class);
-
-		assertThat(taskRepository).isNotNull();
-
-		Class<?> targetClass = AopProxyUtils.ultimateTargetClass(taskRepository);
-
-		assertThat(targetClass).isEqualTo(SimpleTaskRepository.class);
+			TaskRepository taskRepository = context.getBean(TaskRepository.class);
+			assertThat(taskRepository).isNotNull();
+			Class<?> targetClass = AopProxyUtils.ultimateTargetClass(taskRepository);
+			assertThat(targetClass).isEqualTo(SimpleTaskRepository.class);
+		});
 	}
 
 
 	@Test
 	public void testRepositoryInitialized() throws Exception {
-		this.context = new AnnotationConfigApplicationContext(EmbeddedDataSourceConfiguration.class, SimpleTaskConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class);
-
-		TaskExplorer taskExplorer = this.context.getBean(TaskExplorer.class);
-
-		assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1l);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class));
+		applicationContextRunner.run((context) -> {
+			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
+			assertThat(taskExplorer.getTaskExecutionCount()).isEqualTo(1l);
+		});
 	}
 
-	@Test
+	@Test(expected = ApplicationContextException.class)
 	public void testRepositoryNotInitialized() throws Exception {
-		Properties properties = new Properties();
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
+		applicationContextRunner.run((context) -> {
+			Throwable expectedException = context.getStartupFailure();
+			assertNotNull(expectedException);
+			throw expectedException;
+		});
 
-		properties.put("spring.cloud.task.tablePrefix", "foobarless");
-		PropertiesPropertySource propertiesSource = new PropertiesPropertySource("test", properties);
-
-		this.context = new AnnotationConfigApplicationContext();
-		this.context.getEnvironment().getPropertySources().addLast(propertiesSource);
-		((AnnotationConfigApplicationContext)context).register(SimpleTaskConfiguration.class);
-		((AnnotationConfigApplicationContext)context).register(PropertyPlaceholderAutoConfiguration.class);
-		((AnnotationConfigApplicationContext)context).register(EmbeddedDataSourceConfiguration.class);
-		boolean wasExceptionThrown = false;
-		try {
-			this.context.refresh();
-		}
-		catch (ApplicationContextException ex) {
-			wasExceptionThrown = true;
-		}
-		assertThat( wasExceptionThrown).isTrue();
 	}
 
 
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleConfigurers() {
-		this.context = new AnnotationConfigApplicationContext(MultipleConfigurers.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withUserConfiguration(MultipleConfigurers.class);
+		applicationContextRunner.run((context) -> {
+			Throwable expectedException = context.getStartupFailure();
+			assertNotNull(expectedException);
+			throw expectedException;
+		});
 	}
 
 	@Test(expected = BeanCreationException.class)
 	public void testMultipleDataSources() {
-		this.context = new AnnotationConfigApplicationContext(
-				MultipleDataSources.class, SimpleTaskConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withUserConfiguration(MultipleDataSources.class);
+		applicationContextRunner.run((context) -> {
+			Throwable expectedException = context.getStartupFailure();
+			assertNotNull(expectedException);
+			throw expectedException;
+		});
 	}
 
 	/**
-	 * Verify that the verifyEnvironment method skips DataSource Proxy Beans
-	 * when determining the number of available dataSources.
+	 * Verify that the verifyEnvironment method skips DataSource Proxy Beans when determining
+	 * the number of available dataSources.
 	 */
 	@Test
 	public void testWithDataSourceProxy() {
-		this.context = new AnnotationConfigApplicationContext(EmbeddedDataSourceConfiguration.class, TaskProperties.class,
-				PropertyPlaceholderAutoConfiguration.class,  DataSourceProxyConfiguration.class
-				);
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
+						EmbeddedDataSourceConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withUserConfiguration(DataSourceProxyConfiguration.class);
+		applicationContextRunner.run((context) -> {
 
-		assertThat(this.context.getBeanNamesForType(DataSource.class).length).isEqualTo(2);
-		SimpleTaskConfiguration taskConfiguration = this.context.getBean(SimpleTaskConfiguration.class);
-		assertThat(taskConfiguration).isNotNull();
-		assertThat(taskConfiguration.taskExplorer()).isNotNull();
+			assertThat(context.getBeanNamesForType(DataSource.class).length).isEqualTo(2);
+			SimpleTaskConfiguration taskConfiguration = context.getBean(SimpleTaskConfiguration.class);
+			assertThat(taskConfiguration).isNotNull();
+			assertThat(taskConfiguration.taskExplorer()).isNotNull();
+		});
 	}
 
 	@Configuration
@@ -182,12 +201,12 @@ public class SimpleTaskConfigurationTests {
 		private ConfigurableApplicationContext context;
 
 		@Bean
-		public SimpleTaskConfiguration simpleTaskConfiguration() {
+		public BeanDefinitionHolder proxyDataSource() {
 			GenericBeanDefinition proxyBeanDefinition = new GenericBeanDefinition();
 			proxyBeanDefinition.setBeanClassName("javax.sql.DataSource");
 			BeanDefinitionHolder myDataSource = new BeanDefinitionHolder(proxyBeanDefinition,"dataSource2");
 			ScopedProxyUtils.createScopedProxy(myDataSource, (BeanDefinitionRegistry) this.context.getBeanFactory(), true);
-			return new SimpleTaskConfiguration();
+			return myDataSource;
 		}
 
 	}
