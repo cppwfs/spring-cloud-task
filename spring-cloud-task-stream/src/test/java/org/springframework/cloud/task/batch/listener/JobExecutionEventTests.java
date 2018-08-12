@@ -283,32 +283,6 @@ public class JobExecutionEventTests {
 
 	@Test
 	public void testOrderConfiguration() {
-		ConfigurableApplicationContext applicationContext =
-				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
-								EventJobExecutionConfiguration.class,
-								PropertyPlaceholderAutoConfiguration.class,
-								TestSupportBinderAutoConfiguration.class,
-								SimpleTaskConfiguration.class,
-								SingleTaskConfiguration.class},
-						new String[]{"--spring.cloud.task.closecontext_enabled=false",
-								"--spring.main.web-environment=false",
-								"--spring.cloud.task.batch.events.chunk-order=5",
-								"--spring.cloud.task.batch.events.item-process-order=5",
-								"--spring.cloud.task.batch.events.item-read-order=5",
-								"--spring.cloud.task.batch.events.item-write-order=5",
-								"--spring.cloud.task.batch.events.job-execution-order=5",
-								"--spring.cloud.task.batch.events.skip-order=5",
-								"--spring.cloud.task.batch.events.step-execution-order=5"
-				});
-		for (String beanName : LISTENER_BEAN_NAMES) {
-			Ordered ordered = (Ordered)applicationContext.getBean(beanName);
-			assertEquals("Expected order value of 5 for " + beanName,ordered.getOrder(),5);
-		}
-	}
-
-	private void testDisabledConfiguration(String property, String disabledListener) {
-//		boolean exceptionThrown = false;
-		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
 //		ConfigurableApplicationContext applicationContext =
 //				SpringApplication.run(new Class[]{BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class,
 //								EventJobExecutionConfiguration.class,
@@ -318,23 +292,46 @@ public class JobExecutionEventTests {
 //								SingleTaskConfiguration.class},
 //						new String[]{"--spring.cloud.task.closecontext_enabled=false",
 //								"--spring.main.web-environment=false",
-//								disabledPropertyArg});
-//
+//								"--spring.cloud.task.batch.events.chunk-order=5",
+//								"--spring.cloud.task.batch.events.item-process-order=5",
+//								"--spring.cloud.task.batch.events.item-read-order=5",
+//								"--spring.cloud.task.batch.events.item-write-order=5",
+//								"--spring.cloud.task.batch.events.job-execution-order=5",
+//								"--spring.cloud.task.batch.events.skip-order=5",
+//								"--spring.cloud.task.batch.events.step-execution-order=5"
+//				});
+		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
+				.withConfiguration(AutoConfigurations.of(
+						EventJobExecutionConfiguration.class,
+						PropertyPlaceholderAutoConfiguration.class,
+						TestSupportBinderAutoConfiguration.class,
+						SimpleTaskConfiguration.class,
+						SingleTaskConfiguration.class))
+				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
+				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
+								"--spring.main.web-environment=false",
+								"--spring.cloud.task.batch.events.chunk-order=5",
+								"--spring.cloud.task.batch.events.item-process-order=5",
+								"--spring.cloud.task.batch.events.item-read-order=5",
+								"--spring.cloud.task.batch.events.item-write-order=5",
+								"--spring.cloud.task.batch.events.job-execution-order=5",
+								"--spring.cloud.task.batch.events.skip-order=5",
+								"--spring.cloud.task.batch.events.step-execution-order=5");
+		applicationContextRunner.run((context) -> {
+		for (String beanName : LISTENER_BEAN_NAMES) {
+			Ordered ordered = (Ordered)context.getBean(beanName);
+			assertEquals("Expected order value of 5 for " + beanName,ordered.getOrder(),5);
+		}
+
+		});
 //		for (String beanName : LISTENER_BEAN_NAMES) {
-//			if (disabledListener != null && disabledListener.equals(beanName)) {
-//				try {
-//					applicationContext.getBean(disabledListener);
-//				}
-//				catch (NoSuchBeanDefinitionException nsbde) {
-//					exceptionThrown = true;
-//				}
-//				assertTrue(String.format("Did not expect %s bean in context", beanName), exceptionThrown);
-//			}
-//			else {
-//				applicationContext.getBean(beanName);
-//			}
+//			Ordered ordered = (Ordered)applicationContext.getBean(beanName);
+//			assertEquals("Expected order value of 5 for " + beanName,ordered.getOrder(),5);
 //		}
-//		applicationContext.getBean(BatchEventAutoConfiguration.BatchEventsChannels.class);
+	}
+
+	private void testDisabledConfiguration(String property, String disabledListener) {
+		String disabledPropertyArg = (property != null) ? "--" + property + "=false" : "";
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
 								EventJobExecutionConfiguration.class,

@@ -283,12 +283,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		if (this.taskExecutionListeners != null) {
 			try {
 				for (TaskExecutionListener taskExecutionListener : this.taskExecutionListeners) {
-//TODO Added this to make sure that the taskExecutionListener is still running before trying to call it.
-//Need to verify that it works, because taskExecutionListener is not a lifecycle.   This code may  only be here to support
-//the TaskEventTests
-					if (taskExecutionListener instanceof Lifecycle && ((Lifecycle)taskExecutionListener).isRunning()) {
 						taskExecutionListener.onTaskEnd(listenerTaskExecution);
-					}
 				}
 			}
 			catch (Throwable listenerException) {

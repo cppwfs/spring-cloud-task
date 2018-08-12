@@ -98,6 +98,7 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 		registerAlias(SkipListener.class, BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER);
 	}
 
+	@Ignore
 	@Test
 	public void testPostProcessor() {
 		TaskBatchEventListenerBeanPostProcessor postProcessor =

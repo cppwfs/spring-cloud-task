@@ -25,6 +25,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
@@ -50,12 +52,14 @@ public class BatchEventsApplicationTests {
 			context.close();
 		}
 	}
-	
+
 	@Test
 	public void testExecution() throws Exception {
-		SpringApplication.run(JobExecutionListenerBinding.class, "--spring.main.web-environment=false");
+		SpringApplication.run(JobExecutionListenerBinding.class, "--spring.main.webEnvironment=false");
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0",
-				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup");
+				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup",
+				"--spring.jmx.default-domain=fakedomain",
+				"--spring.main.webEnvironment=false");
 		Assert.assertTrue("The latch did not count down to zero before timeout",
 				jobExecutionLatch.await(60, TimeUnit.SECONDS));
 	}
@@ -63,6 +67,7 @@ public class BatchEventsApplicationTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:io/spring/task/listener/job-listener-sink-channel.properties")
 	@Configuration
+	@EnableAutoConfiguration(exclude = WebMvcAutoConfiguration.class)
 	public static class JobExecutionListenerBinding {
 
 		@StreamListener(Sink.INPUT)
