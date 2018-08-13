@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleInstanceTaskListener;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 
@@ -44,7 +44,7 @@ public class SimpleSingleTaskAutoConfigurationWithDataSourceTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
 						PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class,
 						EmbeddedDataSourceConfiguration.class))
 				.withPropertyValues("spring.cloud.task.singleInstanceEnabled=true");

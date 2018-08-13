@@ -39,7 +39,7 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfiguration;
 import org.springframework.cloud.task.batch.configuration.TaskJobLauncherAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -80,7 +80,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 							TaskBatchAutoConfiguration.class,
 							TaskJobLauncherAutoConfiguration.class,
 							SingleTaskConfiguration.class,
-							SimpleTaskConfiguration.class }, enabledArgs);
+							SimpleTaskAutoConfiguration.class }, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -104,7 +104,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 							TaskBatchAutoConfiguration.class,
 							TaskJobLauncherAutoConfiguration.class,
 							SingleTaskConfiguration.class,
-							SimpleTaskConfiguration.class }, enabledArgs);
+							SimpleTaskAutoConfiguration.class }, enabledArgs);
 		}
 		catch (IllegalStateException exception) {
 			isExceptionThrown = true;
@@ -124,7 +124,7 @@ public class TaskJobLauncherCommandLineRunnerTests {
 						TaskBatchAutoConfiguration.class,
 						TaskJobLauncherAutoConfiguration.class,
 						SingleTaskConfiguration.class,
-						SimpleTaskConfiguration.class }, enabledArgs);
+						SimpleTaskAutoConfiguration.class }, enabledArgs);
 		validateContext();
 		assertThat(applicationContext.getBean(JobLauncherCommandLineRunner.class)).isNotNull();
 		boolean exceptionThrown = false;

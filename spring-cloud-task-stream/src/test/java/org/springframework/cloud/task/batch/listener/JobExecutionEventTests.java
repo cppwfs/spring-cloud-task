@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.batch.core.BatchStatus;
@@ -35,22 +34,17 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.boot.SpringApplication;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.cloud.task.batch.listener.support.JobExecutionEvent;
 import org.springframework.cloud.task.batch.listener.support.JobInstanceEvent;
 import org.springframework.cloud.task.batch.listener.support.StepExecutionEvent;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
-import org.springframework.cloud.task.listener.TaskEventAutoConfiguration;
-import org.springframework.cloud.task.listener.TaskEventTests;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
@@ -305,7 +299,7 @@ public class JobExecutionEventTests {
 						EventJobExecutionConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
 						TestSupportBinderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
@@ -337,7 +331,7 @@ public class JobExecutionEventTests {
 								EventJobExecutionConfiguration.class,
 								PropertyPlaceholderAutoConfiguration.class,
 								TestSupportBinderAutoConfiguration.class,
-								SimpleTaskConfiguration.class,
+								SimpleTaskAutoConfiguration.class,
 								SingleTaskConfiguration.class))
 				.withUserConfiguration(BatchEventAutoConfiguration.JobExecutionListenerConfiguration.class)
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",

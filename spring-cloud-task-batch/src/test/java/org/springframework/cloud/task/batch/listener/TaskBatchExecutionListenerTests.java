@@ -45,12 +45,11 @@ import org.springframework.cloud.task.batch.configuration.TaskBatchAutoConfigura
 import org.springframework.cloud.task.batch.configuration.TaskBatchExecutionListenerBeanPostProcessor;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskExecution;
 import org.springframework.cloud.task.repository.TaskExplorer;
-import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,7 +84,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 		validateContext();
 	}
@@ -97,7 +96,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, new String[] {"--spring.cloud.task.batch.listener.enabled=false"});
 		validateContext();
 	}
@@ -109,7 +108,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, new String[] {"--spring.cloud.task.batch.listener.enable=false"});
 		validateContext();
 	}
@@ -121,7 +120,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, new String[] {"--spring.cloud.task.batch.listener.enable=false --spring.cloud.task.batch.listener.enabled=false"});
 		validateContext();
 	}
@@ -133,7 +132,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, new String[] {"--spring.cloud.task.batch.listener.enable=true"});
 		validateContext();
 	}
@@ -145,7 +144,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, new String[] {"--spring.cloud.task.batch.listener.enabled=true"});
 		validateContext();
 	}
@@ -157,7 +156,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 		validateContext();
 	}
@@ -180,7 +179,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
@@ -200,7 +199,7 @@ public class TaskBatchExecutionListenerTests {
 				EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
@@ -218,7 +217,7 @@ public class TaskBatchExecutionListenerTests {
 				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
@@ -237,7 +236,7 @@ public class TaskBatchExecutionListenerTests {
 				PropertyPlaceholderAutoConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskExplorer taskExplorer = this.applicationContext.getBean(TaskExplorer.class);
@@ -292,7 +291,7 @@ public class TaskBatchExecutionListenerTests {
 				PropertyPlaceholderAutoConfiguration.class, EmbeddedDataSourceConfiguration.class,
 				BatchAutoConfiguration.class,
 				TaskBatchAutoConfiguration.class,
-				SimpleTaskConfiguration.class,
+				SimpleTaskAutoConfiguration.class,
 				SingleTaskConfiguration.class }, ARGS);
 
 		TaskBatchExecutionListenerBeanPostProcessor beanPostProcessor =

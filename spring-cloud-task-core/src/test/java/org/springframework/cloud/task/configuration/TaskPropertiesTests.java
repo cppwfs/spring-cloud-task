@@ -7,10 +7,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.task.repository.TaskRepository;
-import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
-import org.springframework.cloud.task.repository.support.TaskExecutionDaoFactoryBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,7 +32,7 @@ public class TaskPropertiesTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@SpringBootTest(classes={TaskPropertiesTests.Config.class, SimpleTaskConfiguration.class, SingleTaskConfiguration.class}, properties = { "spring.cloud.task.closecontextEnabled=false" })
+	@SpringBootTest(classes={TaskPropertiesTests.Config.class, SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class}, properties = { "spring.cloud.task.closecontextEnabled=false" })
 	@DirtiesContext
 	public static class CloseContextEnabledTest extends TaskPropertiesTests {}
 	

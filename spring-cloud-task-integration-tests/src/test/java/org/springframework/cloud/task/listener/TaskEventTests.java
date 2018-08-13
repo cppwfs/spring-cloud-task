@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -34,10 +33,9 @@ import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoCo
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.repository.TaskExecution;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -68,7 +66,7 @@ public class TaskEventTests {
 						TaskEventAutoConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
 						RabbitServiceAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
 						"--spring.cloud.task.name=" + TASK_NAME,

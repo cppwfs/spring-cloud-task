@@ -34,7 +34,7 @@ import org.springframework.boot.autoconfigure.jdbc.EmbeddedDataSourceConfigurati
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.task.configuration.DefaultTaskConfigurer;
 import org.springframework.cloud.task.configuration.EnableTask;
-import org.springframework.cloud.task.configuration.SimpleTaskConfiguration;
+import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
 import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.cloud.task.configuration.TaskConfigurer;
 import org.springframework.cloud.task.repository.TaskExplorer;
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.mock;
  * @author Glenn Renfro
  * @author Michael Minella
  */
-public class SimpleTaskConfigurationTests {
+public class SimpleTaskAutoConfigurationTests {
 
 	private ConfigurableApplicationContext context;
 
@@ -71,7 +71,7 @@ public class SimpleTaskConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
 						PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class));
 		applicationContextRunner.run((context) -> {
 
@@ -88,7 +88,7 @@ public class SimpleTaskConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class));
 		applicationContextRunner.run((context) -> {
 			TaskExplorer taskExplorer = context.getBean(TaskExplorer.class);
@@ -101,7 +101,7 @@ public class SimpleTaskConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(EmbeddedDataSourceConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withPropertyValues("spring.cloud.task.tablePrefix=foobarless");
 		applicationContextRunner.run((context) -> {
@@ -118,7 +118,7 @@ public class SimpleTaskConfigurationTests {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(
 						PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(MultipleConfigurers.class);
 		applicationContextRunner.run((context) -> {
@@ -132,7 +132,7 @@ public class SimpleTaskConfigurationTests {
 	public void testMultipleDataSources() {
 		ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner()
 				.withConfiguration(AutoConfigurations.of(PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(MultipleDataSources.class);
 		applicationContextRunner.run((context) -> {
@@ -152,13 +152,13 @@ public class SimpleTaskConfigurationTests {
 				.withConfiguration(AutoConfigurations.of(
 						EmbeddedDataSourceConfiguration.class,
 						PropertyPlaceholderAutoConfiguration.class,
-						SimpleTaskConfiguration.class,
+						SimpleTaskAutoConfiguration.class,
 						SingleTaskConfiguration.class))
 				.withUserConfiguration(DataSourceProxyConfiguration.class);
 		applicationContextRunner.run((context) -> {
 
 			assertThat(context.getBeanNamesForType(DataSource.class).length).isEqualTo(2);
-			SimpleTaskConfiguration taskConfiguration = context.getBean(SimpleTaskConfiguration.class);
+			SimpleTaskAutoConfiguration taskConfiguration = context.getBean(SimpleTaskAutoConfiguration.class);
 			assertThat(taskConfiguration).isNotNull();
 			assertThat(taskConfiguration.taskExplorer()).isNotNull();
 		});

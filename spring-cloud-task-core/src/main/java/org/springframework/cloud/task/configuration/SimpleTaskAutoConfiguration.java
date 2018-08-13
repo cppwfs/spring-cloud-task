@@ -56,9 +56,9 @@ import org.springframework.util.CollectionUtils;
 @Configuration
 @EnableTransactionManagement
 @EnableConfigurationProperties(TaskProperties.class)
-public class SimpleTaskConfiguration {
+public class SimpleTaskAutoConfiguration {
 
-	protected static final Log logger = LogFactory.getLog(SimpleTaskConfiguration.class);
+	protected static final Log logger = LogFactory.getLog(SimpleTaskAutoConfiguration.class);
 
 	@Autowired(required = false)
 	private Collection<DataSource> dataSources;
