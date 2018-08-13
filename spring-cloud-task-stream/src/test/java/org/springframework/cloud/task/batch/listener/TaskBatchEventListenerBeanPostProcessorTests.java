@@ -17,7 +17,6 @@
 package org.springframework.cloud.task.batch.listener;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -98,7 +97,6 @@ public class TaskBatchEventListenerBeanPostProcessorTests {
 		registerAlias(SkipListener.class, BatchEventAutoConfiguration.SKIP_EVENTS_LISTENER);
 	}
 
-	@Ignore
 	@Test
 	public void testPostProcessor() {
 		TaskBatchEventListenerBeanPostProcessor postProcessor =
