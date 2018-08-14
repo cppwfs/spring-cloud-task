@@ -5,12 +5,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
-import org.springframework.cloud.task.configuration.SingleTaskConfiguration;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +50,13 @@ public class TaskCoreTests {
 
 	@Test
 	public void successfulTaskTest() {
-		applicationContext = new SpringApplicationBuilder().sources(new Class[]{TaskConfiguration.class, SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
-				PropertyPlaceholderAutoConfiguration.class}).build().run(new String[]{
-				"--spring.cloud.task.closecontext.enable=false",
-				"--spring.cloud.task.name=" + TASK_NAME,
-				"--spring.main.web-environment=false"});
+		this.applicationContext = SpringApplication.run(new Class[] {
+				TaskConfiguration.class,
+				PropertyPlaceholderAutoConfiguration.class },
+				new String[] {
+						"spring.cloud.task.closecontext.enable=false",
+						"spring.cloud.task.name=" + TASK_NAME,
+						"spring.main.web-environment=false" });
 
 		String output = this.outputCapture.toString();
 		assertTrue("Test results do not show create task message: " + output,
@@ -69,11 +71,13 @@ public class TaskCoreTests {
 	public void exceptionTaskTest() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class, SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
-					PropertyPlaceholderAutoConfiguration.class).build().run(new String[]{
-					"--spring.cloud.task.closecontext.enable=false",
-					"--spring.cloud.task.name=" + TASK_NAME,
-					"--spring.main.web-environment=false"});
+			this.applicationContext = SpringApplication.run(new Class[] {
+							TaskExceptionConfiguration.class,
+							PropertyPlaceholderAutoConfiguration.class },
+					new String[] {
+							"spring.cloud.task.closecontext.enable=false",
+							"spring.cloud.task.name=" + TASK_NAME,
+							"spring.main.web-environment=false" });
 		}
 		catch (IllegalStateException exception) {
 			exceptionFired = true;
@@ -97,8 +101,9 @@ public class TaskCoreTests {
 	public void invalidExecutionId() {
 		boolean exceptionFired = false;
 		try {
-			applicationContext = new SpringApplicationBuilder().sources(TaskExceptionConfiguration.class, SimpleTaskAutoConfiguration.class, SingleTaskConfiguration.class,
-					PropertyPlaceholderAutoConfiguration.class).build().run(new String[]{
+			applicationContext = this.applicationContext = SpringApplication.run(new Class[] {
+							TaskExceptionConfiguration.class,
+							PropertyPlaceholderAutoConfiguration.class }, new String[]{
 					"--spring.cloud.task.closecontext.enable=false",
 					"--spring.cloud.task.name=" + TASK_NAME,
 					"--spring.main.web-environment=false",
@@ -115,6 +120,7 @@ public class TaskCoreTests {
 	}
 
 	@Configuration
+	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, TaskConfiguration.class})
 	@EnableTask
 	public static class TaskConfiguration {
 
@@ -129,6 +135,7 @@ public class TaskCoreTests {
 	}
 
 	@Configuration
+	@ImportAutoConfiguration({SimpleTaskAutoConfiguration.class, TaskExceptionConfiguration.class})
 	@EnableTask
 	public static class TaskExceptionConfiguration {
 

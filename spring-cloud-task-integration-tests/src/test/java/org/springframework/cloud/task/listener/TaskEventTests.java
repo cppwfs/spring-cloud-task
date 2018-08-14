@@ -77,17 +77,6 @@ public class TaskEventTests {
 			assertNotNull(context.getBean("taskEventListener"));
 			assertNotNull(context.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
 		});
-
-//		ConfigurableApplicationContext applicationContext = new SpringApplicationBuilder().sources(new Class[] {TaskEventsConfiguration.class,
-//				TaskEventAutoConfiguration.class,
-//				PropertyPlaceholderAutoConfiguration.class,
-//				RabbitServiceAutoConfiguration.class}).build().run("--spring.cloud.task.closecontext_enabled=false",
-//				"--spring.cloud.task.name=" + TASK_NAME,
-//				"--spring.main.web-environment=false",
-//				"--spring.cloud.stream.defaultBinder=rabbit",
-//				"--spring.cloud.stream.bindings.task-events.destination=test");
-//		assertNotNull(applicationContext.getBean("taskEventListener"));
-//		assertNotNull(applicationContext.getBean(TaskEventAutoConfiguration.TaskEventChannels.class));
 		assertTrue(latch.await(1, TimeUnit.SECONDS));
 	}
 

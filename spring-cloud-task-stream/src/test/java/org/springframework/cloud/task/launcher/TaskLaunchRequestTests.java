@@ -31,7 +31,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Glenn Renfro
  */
-
 public class TaskLaunchRequestTests {
 	public static final String URI = "http://myURI";
 
