@@ -31,6 +31,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.rabbit.config.RabbitServiceAutoConfiguration;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
+import org.springframework.cloud.stream.config.BindingServiceConfiguration;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.cloud.task.configuration.SimpleTaskAutoConfiguration;
@@ -67,7 +68,8 @@ public class TaskEventTests {
 						PropertyPlaceholderAutoConfiguration.class,
 						RabbitServiceAutoConfiguration.class,
 						SimpleTaskAutoConfiguration.class,
-						SingleTaskConfiguration.class))
+						SingleTaskConfiguration.class,
+						BindingServiceConfiguration.class))
 				.withPropertyValues("--spring.cloud.task.closecontext_enabled=false",
 						"--spring.cloud.task.name=" + TASK_NAME,
 						"--spring.main.web-environment=false",

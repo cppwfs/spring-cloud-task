@@ -11,6 +11,6 @@ import org.springframework.cloud.task.configuration.EnableTask;
 public class BatchJobApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BatchJobApplication.class, args); //works
+		SpringApplication.run(BatchJobApplication.class, args);
 	}
 }

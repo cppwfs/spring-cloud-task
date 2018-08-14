@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 the original author or authors.
+ *  Copyright 2016-2018 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.test.junit.rabbit.RabbitTestSupport;
@@ -67,7 +65,6 @@ public class BatchEventsApplicationTests {
 	@EnableBinding(Sink.class)
 	@PropertySource("classpath:io/spring/task/listener/job-listener-sink-channel.properties")
 	@Configuration
-	@EnableAutoConfiguration(exclude = WebMvcAutoConfiguration.class)
 	public static class JobExecutionListenerBinding {
 
 		@StreamListener(Sink.INPUT)
