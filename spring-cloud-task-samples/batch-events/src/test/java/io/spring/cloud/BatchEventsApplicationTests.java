@@ -55,7 +55,7 @@ public class BatchEventsApplicationTests {
 
 	@Test
 	public void testExecution() throws Exception {
-		SpringApplication.run(JobExecutionListenerBinding.class, "--spring.main.webEnvironment=false");
+		SpringApplication.run(JobExecutionListenerBinding.class, "--spring.main.web-environment=false");
 		SpringApplication.run(BatchEventsApplication.class, "--server.port=0",
 				"--spring.cloud.stream.bindings.output.producer.requiredGroups=testgroup",
 				"--spring.jmx.default-domain=fakedomain",

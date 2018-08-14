@@ -283,7 +283,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		if (this.taskExecutionListeners != null) {
 			try {
 				for (TaskExecutionListener taskExecutionListener : this.taskExecutionListeners) {
-						taskExecutionListener.onTaskEnd(listenerTaskExecution);
+					taskExecutionListener.onTaskEnd(listenerTaskExecution);
 				}
 			}
 			catch (Throwable listenerException) {

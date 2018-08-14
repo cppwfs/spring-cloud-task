@@ -33,9 +33,7 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.task.configuration.EnableTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +41,6 @@ import org.springframework.context.annotation.Configuration;
 @SpringBootApplication
 @EnableTask
 @EnableBatchProcessing
-@EnableAutoConfiguration(exclude = WebMvcAutoConfiguration.class)
 public class BatchEventsApplication {
 
 	public static void main(String[] args) {

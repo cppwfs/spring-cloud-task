@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.batch.core.JobParameter;
