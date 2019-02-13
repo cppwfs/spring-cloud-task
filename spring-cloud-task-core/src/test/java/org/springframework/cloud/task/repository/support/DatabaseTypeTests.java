@@ -15,17 +15,19 @@
  */
 package org.springframework.cloud.task.repository.support;
 
+import javax.sql.DataSource;
+import javax.ws.rs.HEAD;
+
+import org.junit.Test;
+
+import org.springframework.cloud.task.util.TestDBUtils;
+
 import static org.junit.Assert.assertEquals;
 import static org.springframework.cloud.task.repository.support.DatabaseType.HSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.MYSQL;
 import static org.springframework.cloud.task.repository.support.DatabaseType.ORACLE;
 import static org.springframework.cloud.task.repository.support.DatabaseType.POSTGRES;
 import static org.springframework.cloud.task.repository.support.DatabaseType.fromProductName;
-
-import javax.sql.DataSource;
-
-import org.junit.Test;
-import org.springframework.cloud.task.util.TestDBUtils;
 
 /**
  * Tests that the correct database names are selected from datasource metadata.
@@ -43,6 +45,7 @@ public class DatabaseTypeTests {
 		assertEquals(ORACLE, fromProductName("Oracle"));
 		assertEquals(POSTGRES, fromProductName("PostgreSQL"));
 		assertEquals(MYSQL, fromProductName("MySQL"));
+		assertEquals(MYSQL, fromProductName("MariaDB"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -72,6 +75,12 @@ public class DatabaseTypeTests {
 	public void testFromMetaDataForMySQL() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("MySQL");
 		assertEquals(MYSQL, DatabaseType.fromMetaData(ds));
+	}
+
+	@Test
+	public void testFromMetaDataForMariaDB() throws Exception {
+		DataSource ds = TestDBUtils.getMockDataSource("MariaDB");
+		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
 	}
 
 }
