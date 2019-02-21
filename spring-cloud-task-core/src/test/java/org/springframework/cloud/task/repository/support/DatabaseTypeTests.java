@@ -16,7 +16,6 @@
 package org.springframework.cloud.task.repository.support;
 
 import javax.sql.DataSource;
-import javax.ws.rs.HEAD;
 
 import org.junit.Test;
 
@@ -80,7 +79,7 @@ public class DatabaseTypeTests {
 	@Test
 	public void testFromMetaDataForMariaDB() throws Exception {
 		DataSource ds = TestDBUtils.getMockDataSource("MariaDB");
-		assertThat(DatabaseType.fromMetaData(ds)).isEqualTo(MYSQL);
+		assertEquals(MYSQL, DatabaseType.fromMetaData(ds));
 	}
 
 }
