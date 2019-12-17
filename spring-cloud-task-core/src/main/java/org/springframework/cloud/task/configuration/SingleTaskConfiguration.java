@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.integration.support.locks.PassThruLockRegistry;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Autoconfiguration of {@link SingleInstanceTaskListener}.
@@ -49,14 +50,18 @@ public class SingleTaskConfiguration {
 	private TaskConfigurer taskConfigurer;
 
 	@Bean
-	public SingleInstanceTaskListener taskListener(TaskNameResolver resolver) {
+	public SingleInstanceTaskListener taskListener(TaskNameResolver resolver,
+			@Autowired(required = false) PlatformTransactionManager transactionManager) {
 		if (this.taskConfigurer.getTaskDataSource() == null) {
 			return new SingleInstanceTaskListener(new PassThruLockRegistry(), resolver,
 					this.taskProperties, this.applicationEventPublisher);
 		}
 
-		return new SingleInstanceTaskListener(this.taskConfigurer.getTaskDataSource(),
-				resolver, this.taskProperties, this.applicationEventPublisher);
+		SingleInstanceTaskListener singleInstanceTaskListener = new SingleInstanceTaskListener(
+				this.taskConfigurer.getTaskDataSource(), resolver, this.taskProperties,
+				this.applicationEventPublisher);
+		singleInstanceTaskListener.setTransactionManager(transactionManager);
+		return singleInstanceTaskListener;
 	}
 
 }

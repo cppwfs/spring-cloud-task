@@ -37,6 +37,10 @@ import org.springframework.integration.leader.event.OnFailedToAcquireMutexEvent;
 import org.springframework.integration.leader.event.OnGrantedEvent;
 import org.springframework.integration.support.leader.LockRegistryLeaderInitiator;
 import org.springframework.integration.support.locks.LockRegistry;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * When spring.cloud.task.single-instance-enabled is set to true this listener will create
@@ -66,6 +70,8 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 	private DataSource dataSource;
 
 	private TaskProperties taskProperties;
+
+	private PlatformTransactionManager transactionManager;
 
 	public SingleInstanceTaskListener(LockRegistry lockRegistry,
 			TaskNameResolver taskNameResolver, TaskProperties taskProperties,
@@ -144,13 +150,52 @@ public class SingleInstanceTaskListener implements ApplicationListener<Applicati
 		}
 	}
 
+	public PlatformTransactionManager getTransactionManager() {
+		return transactionManager;
+	}
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
+
 	private LockRegistry getDefaultLockRegistry(long executionId) {
-		DefaultLockRepository lockRepository = new DefaultLockRepository(this.dataSource,
-				String.valueOf(executionId));
+		DefaultLockRepository lockRepository = (this.transactionManager == null)
+				? new DefaultLockRepository(this.dataSource, String.valueOf(executionId))
+				: new TaskLockRepository(dataSource, String.valueOf(executionId),
+						this.transactionManager);
 		lockRepository.setPrefix(this.taskProperties.getTablePrefix());
 		lockRepository.setTimeToLive(this.taskProperties.getSingleInstanceLockTtl());
 		lockRepository.afterPropertiesSet();
 		return new JdbcLockRegistry(lockRepository);
+	}
+
+	private static class TaskLockRepository extends DefaultLockRepository {
+
+		private PlatformTransactionManager transactionManager;
+
+		TaskLockRepository(DataSource dataSource, String id,
+				PlatformTransactionManager transactionManager) {
+			super(dataSource, id);
+			this.transactionManager = transactionManager;
+		}
+
+		public boolean superAcquire(String lock) {
+			return super.acquire(lock);
+		}
+
+		@Override
+		public boolean acquire(String lock) {
+			TransactionTemplate transactionTemplate = new TransactionTemplate(
+					this.transactionManager);
+			return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+				@Override
+				public Boolean doInTransaction(TransactionStatus status) {
+					return superAcquire(lock);
+				}
+			});
+
+		}
+
 	}
 
 }
