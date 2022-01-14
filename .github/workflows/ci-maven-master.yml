@@ -1,9 +1,11 @@
 name: CI PRs
 
 on:
+  push:
   pull_request:
     branches:
       - main
+      - TASK-ADD-PR-GHACTION
 
 jobs:
   build:
