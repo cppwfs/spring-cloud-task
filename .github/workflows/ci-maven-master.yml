@@ -18,4 +18,4 @@ jobs:
         with:
           distribution: adopt
           java-version: 17
-      run: mvn "-Dmaven.repo.local=.m2" -U -B package -s .settings.xml
+      - run: mvn "-Dmaven.repo.local=.m2" -U -B package -s .settings.xml
