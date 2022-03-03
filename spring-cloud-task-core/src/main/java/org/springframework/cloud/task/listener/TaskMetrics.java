@@ -17,9 +17,9 @@
 package org.springframework.cloud.task.listener;
 
 import io.micrometer.core.instrument.LongTaskTimer;
-import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.observation.Observation;
 
 import org.springframework.cloud.task.repository.TaskExecution;
 
@@ -31,7 +31,11 @@ import org.springframework.cloud.task.repository.TaskExecution;
  * @since 2.2
  */
 public class TaskMetrics {
+	private MeterRegistry registry;
 
+	public TaskMetrics(MeterRegistry meterRegistry) {
+		this.registry = meterRegistry;
+	}
 	/**
 	 * Task timer measurements. Records information about task duration and status.
 	 */
@@ -88,19 +92,30 @@ public class TaskMetrics {
 	 */
 	public static final String TASK_EXCEPTION_TAG = "task.exception";
 
-	private Timer.Sample taskSample;
-
 	private LongTaskTimer.Sample longTaskSample;
 
 	private Throwable exception;
 
+	private Observation observation;
+
 	public void onTaskStartup(TaskExecution taskExecution) {
+		this.observation = Observation.start(SPRING_CLOUD_TASK_METER, this.registry)
+			.lowCardinalityTag(TASK_EXIT_CODE_TAG, String.valueOf(taskExecution.getExitCode()))
+			.lowCardinalityTag(TASK_EXCEPTION_TAG,
+				(this.exception == null) ? "none"
+					: this.exception.getClass().getSimpleName())
+			.lowCardinalityTag(TASK_STATUS_TAG,
+				(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE)
+			.lowCardinalityTag(TASK_NAME_TAG, taskExecution.getTaskName())
+			.lowCardinalityTag(TASK_EXECUTION_ID_TAG, "" + taskExecution.getExecutionId())
+			.lowCardinalityTag(TASK_PARENT_EXECUTION_ID_TAG,
+				"" + taskExecution.getParentExecutionId());
+
 		LongTaskTimer longTaskTimer = LongTaskTimer
 				.builder(SPRING_CLOUD_TASK_ACTIVE_METER).description("Long task duration")
-				.tags(commonTags(taskExecution)).register(Metrics.globalRegistry);
+				.tags(commonTags(taskExecution)).register(this.registry);
 
 		this.longTaskSample = longTaskTimer.start();
-		this.taskSample = Timer.start(Metrics.globalRegistry);
 	}
 
 	public void onTaskFailed(Throwable throwable) {
@@ -108,16 +123,9 @@ public class TaskMetrics {
 	}
 
 	public void onTaskEnd(TaskExecution taskExecution) {
-		if (this.taskSample != null) {
-			this.taskSample.stop(Timer.builder(SPRING_CLOUD_TASK_METER)
-					.description("Task duration").tags(commonTags(taskExecution))
-					.tag(TASK_EXIT_CODE_TAG, "" + taskExecution.getExitCode())
-					.tag(TASK_EXCEPTION_TAG,
-							(this.exception == null) ? "none"
-									: this.exception.getClass().getSimpleName())
-					.tag(TASK_STATUS_TAG,
-							(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE));
-			this.taskSample = null;
+		if (this.observation != null) {
+			this.observation.stop();
+			this.observation = null;
 		}
 
 		if (this.longTaskSample != null) {

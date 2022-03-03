@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -132,7 +133,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	public TaskLifecycleListener(TaskRepository taskRepository,
 			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
 			TaskExplorer taskExplorer, TaskProperties taskProperties,
-			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory) {
+			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory,
+		MeterRegistry meterRegistry) {
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
@@ -146,7 +148,7 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
-		this.taskMetrics = new TaskMetrics();
+		this.taskMetrics = new TaskMetrics(meterRegistry);
 	}
 
 	/**
