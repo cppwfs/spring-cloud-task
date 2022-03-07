@@ -94,43 +94,45 @@ public class TaskMetrics {
 
 	private LongTaskTimer.Sample longTaskSample;
 
-	private Throwable exception;
-
 	private Observation observation;
 
 	public void onTaskStartup(TaskExecution taskExecution) {
-		this.observation = Observation.start(SPRING_CLOUD_TASK_METER, this.registry)
-			.lowCardinalityTag(TASK_EXIT_CODE_TAG, String.valueOf(taskExecution.getExitCode()))
-			.lowCardinalityTag(TASK_EXCEPTION_TAG,
-				(this.exception == null) ? "none"
-					: this.exception.getClass().getSimpleName())
-			.lowCardinalityTag(TASK_STATUS_TAG,
-				(this.exception == null) ? STATUS_SUCCESS : STATUS_FAILURE)
-			.lowCardinalityTag(TASK_NAME_TAG, taskExecution.getTaskName())
-			.lowCardinalityTag(TASK_EXECUTION_ID_TAG, "" + taskExecution.getExecutionId())
-			.lowCardinalityTag(TASK_PARENT_EXECUTION_ID_TAG,
-				"" + taskExecution.getParentExecutionId());
+		if (this.registry != null) {
+			this.observation = Observation.start(SPRING_CLOUD_TASK_METER, this.registry)
+				.lowCardinalityTag(TASK_EXIT_CODE_TAG, String.valueOf(taskExecution.getExitCode()))
+				.lowCardinalityTag(TASK_STATUS_TAG, STATUS_SUCCESS)
+				.lowCardinalityTag(TASK_EXCEPTION_TAG, "none")
+				.lowCardinalityTag(TASK_NAME_TAG, taskExecution.getTaskName())
+				.lowCardinalityTag(TASK_EXECUTION_ID_TAG, "" + taskExecution.getExecutionId())
+				.lowCardinalityTag(TASK_PARENT_EXECUTION_ID_TAG,
+					"" + taskExecution.getParentExecutionId());
 
-		LongTaskTimer longTaskTimer = LongTaskTimer
+			LongTaskTimer longTaskTimer = LongTaskTimer
 				.builder(SPRING_CLOUD_TASK_ACTIVE_METER).description("Long task duration")
 				.tags(commonTags(taskExecution)).register(this.registry);
 
-		this.longTaskSample = longTaskTimer.start();
+			this.longTaskSample = longTaskTimer.start();
+		}
 	}
 
 	public void onTaskFailed(Throwable throwable) {
-		this.exception = throwable;
+		if (this.registry != null) {
+			this.observation.lowCardinalityTag(TASK_EXCEPTION_TAG, throwable.getClass().getSimpleName());
+			this.observation.lowCardinalityTag(TASK_STATUS_TAG, STATUS_FAILURE);
+		}
 	}
 
 	public void onTaskEnd(TaskExecution taskExecution) {
-		if (this.observation != null) {
-			this.observation.stop();
-			this.observation = null;
-		}
+		if (this.registry != null) {
+			if (this.observation != null) {
+				this.observation.stop();
+				this.observation = null;
+			}
 
-		if (this.longTaskSample != null) {
-			this.longTaskSample.stop();
-			this.longTaskSample = null;
+			if (this.longTaskSample != null) {
+				this.longTaskSample.stop();
+				this.longTaskSample = null;
+			}
 		}
 	}
 

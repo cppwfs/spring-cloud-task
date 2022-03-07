@@ -68,7 +68,7 @@ public class TaskLifecycleConfiguration {
 	public TaskLifecycleConfiguration(TaskProperties taskProperties,
 			ConfigurableApplicationContext context, TaskRepository taskRepository,
 			TaskExplorer taskExplorer, TaskNameResolver taskNameResolver,
-			ObjectProvider<ApplicationArguments> applicationArguments, io.micrometer.core.instrument.MeterRegistry meterRegistry) {
+			ObjectProvider<ApplicationArguments> applicationArguments, @Autowired (required = false) io.micrometer.core.instrument.MeterRegistry meterRegistry) {
 		this.taskProperties = taskProperties;
 		this.context = context;
 		this.taskRepository = taskRepository;
@@ -76,7 +76,9 @@ public class TaskLifecycleConfiguration {
 		this.taskNameResolver = taskNameResolver;
 		this.applicationArguments = applicationArguments.getIfAvailable();
 		this.meterRegistry = meterRegistry;
-		meterRegistry.withTimerObservationHandler(); // TODO: REMOVE THIS WHEN BOOT GOES LIVES
+		if (this.meterRegistry != null) {
+			meterRegistry.withTimerObservationHandler(); // TODO: REMOVE THIS WHEN BOOT GOES LIVES
+		}
 	}
 
 	@Bean

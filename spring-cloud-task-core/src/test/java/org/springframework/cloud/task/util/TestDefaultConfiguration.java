@@ -82,7 +82,8 @@ public class TestDefaultConfiguration implements InitializingBean {
 	}
 
 	@Bean
-	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer, io.micrometer.core.instrument.MeterRegistry meterRegistry) {
+	public TaskLifecycleListener taskHandler(TaskExplorer taskExplorer,
+		@Autowired(required = false) io.micrometer.core.instrument.MeterRegistry meterRegistry) {
 		return new TaskLifecycleListener(taskRepository(), taskNameResolver(),
 				this.applicationArguments, taskExplorer, this.taskProperties,
 				taskListenerExecutorObjectProvider(this.context), meterRegistry);

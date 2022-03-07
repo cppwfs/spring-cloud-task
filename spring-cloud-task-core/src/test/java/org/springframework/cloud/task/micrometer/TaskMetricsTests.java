@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2019 the original author or authors.
+ * Copyright 2019-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Christian Tzolov
+ * @author Glenn Renfro
  */
 public class TaskMetricsTests {
 
@@ -132,26 +133,24 @@ public class TaskMetricsTests {
 		// is not affected by this.
 		taskMetrics.onTaskEnd(taskExecution);
 
-//		Timer taskTimer = simpleMeterRegistry.find(TaskMetrics.SPRING_CLOUD_TASK_METER)
-//				.timer();
-//		assertThat(taskTimer).isNotNull();
-//
-//		assertThat(taskTimer).isNotNull();
-//		// assertThat(taskTimer.count()).isEqualTo(1L);
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
-//				.isEqualTo("myTask");
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
-//				.isEqualTo("123");
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXTERNAL_EXECUTION_ID_TAG))
-//				.isEqualTo("unknown");
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_PARENT_EXECUTION_ID_TAG))
-//				.isEqualTo("-1");
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXIT_CODE_TAG))
-//				.isEqualTo("0");
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXCEPTION_TAG))
-//				.isEqualTo("RuntimeException");
-//		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_STATUS_TAG))
-//				.isEqualTo(TaskMetrics.STATUS_FAILURE);
+		Timer taskTimer = simpleMeterRegistry.find(TaskMetrics.SPRING_CLOUD_TASK_METER)
+				.timer();
+		assertThat(taskTimer).isNotNull();
+
+		assertThat(taskTimer).isNotNull();
+		assertThat(taskTimer.count()).isEqualTo(1L);
+		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_NAME_TAG))
+				.isEqualTo("myTask");
+		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXECUTION_ID_TAG))
+				.isEqualTo("123");
+		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_PARENT_EXECUTION_ID_TAG))
+				.isEqualTo("-1");
+		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXIT_CODE_TAG))
+				.isEqualTo("0");
+		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_EXCEPTION_TAG))
+				.isEqualTo("RuntimeException");
+		assertThat(taskTimer.getId().getTag(TaskMetrics.TASK_STATUS_TAG))
+				.isEqualTo(TaskMetrics.STATUS_FAILURE);
 
 		// Test Long Task Timer after the task has completed.
 		assertThat(longTaskTimer.activeTasks()).isEqualTo(0);

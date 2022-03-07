@@ -134,7 +134,8 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 			TaskNameResolver taskNameResolver, ApplicationArguments applicationArguments,
 			TaskExplorer taskExplorer, TaskProperties taskProperties,
 			TaskListenerExecutorObjectFactory taskListenerExecutorObjectFactory,
-		MeterRegistry meterRegistry) {
+			@Autowired(required = false) MeterRegistry meterRegistry) {
+		TaskMetrics taskMetrics;
 		Assert.notNull(taskRepository, "A taskRepository is required");
 		Assert.notNull(taskNameResolver, "A taskNameResolver is required");
 		Assert.notNull(taskExplorer, "A taskExplorer is required");
@@ -148,7 +149,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 		this.taskExplorer = taskExplorer;
 		this.taskProperties = taskProperties;
 		this.taskListenerExecutorObjectFactory = taskListenerExecutorObjectFactory;
-		this.taskMetrics = new TaskMetrics(meterRegistry);
+		taskMetrics = meterRegistry != null ?
+			new TaskMetrics(meterRegistry) : null;
+		this.taskMetrics = taskMetrics;
 	}
 
 	/**
@@ -317,7 +320,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskStartup(TaskExecution taskExecution) {
-		this.taskMetrics.onTaskStartup(taskExecution);
+		if (this.taskMetrics != null) {
+			this.taskMetrics.onTaskStartup(taskExecution);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		List<TaskExecutionListener> startupListenerList = new ArrayList<>(
 				this.taskExecutionListeners);
@@ -340,7 +345,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 	}
 
 	private TaskExecution invokeOnTaskEnd(TaskExecution taskExecution) {
-		this.taskMetrics.onTaskEnd(taskExecution);
+		if (this.taskMetrics != null) {
+			this.taskMetrics.onTaskEnd(taskExecution);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
@@ -364,7 +371,9 @@ public class TaskLifecycleListener implements ApplicationListener<ApplicationEve
 
 	private TaskExecution invokeOnTaskError(TaskExecution taskExecution,
 			Throwable throwable) {
-		this.taskMetrics.onTaskFailed(throwable);
+		if (this.taskMetrics != null) {
+			this.taskMetrics.onTaskFailed(throwable);
+		}
 		TaskExecution listenerTaskExecution = getTaskExecutionCopy(taskExecution);
 		if (this.taskExecutionListeners != null) {
 			try {
