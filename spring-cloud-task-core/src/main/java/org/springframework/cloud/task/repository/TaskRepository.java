@@ -39,7 +39,7 @@ public interface TaskRepository {
 	 * @param exitMessage to be stored for the task.
 	 * @return the updated {@link TaskExecution}
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage);
 
 	/**
@@ -52,7 +52,7 @@ public interface TaskRepository {
 	 * @return the updated {@link TaskExecution}
 	 * @since 1.1.0
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution completeTaskExecution(long executionId, Integer exitCode, Date endTime, String exitMessage,
 			String errorMessage);
 
@@ -65,7 +65,7 @@ public interface TaskRepository {
 	 * TaskExecution's taskExecutionId will also contain the id that was used to store the
 	 * TaskExecution.
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution createTaskExecution(TaskExecution taskExecution);
 
 	/**
@@ -76,7 +76,7 @@ public interface TaskRepository {
 	 * @param name task name to be associated with the task execution.
 	 * @return the initial {@link TaskExecution}
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution createTaskExecution(String name);
 
 	/**
@@ -86,7 +86,7 @@ public interface TaskRepository {
 	 * launching, etc).
 	 * @return the initial {@link TaskExecution}
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution createTaskExecution();
 
 	/**
@@ -98,7 +98,7 @@ public interface TaskRepository {
 	 * @param externalExecutionId id assigned to the task by the platform.
 	 * @return TaskExecution created based on the parameters.
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
 			String externalExecutionId);
 
@@ -107,7 +107,7 @@ public interface TaskRepository {
 	 * @param executionid to the task execution to be updated.
 	 * @param externalExecutionId id assigned to the task by the platform.
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	void updateExternalExecutionId(long executionid, String externalExecutionId);
 
 	/**
@@ -121,7 +121,7 @@ public interface TaskRepository {
 	 * @return A TaskExecution that contains the information available at the beginning of
 	 * a TaskExecution.
 	 */
-	@Transactional("${spring.cloud.task.transaction-manager:transactionManager}")
+	@Transactional("${spring.cloud.task.transaction-manager:springCloudTaskTransactionManager}")
 	TaskExecution startTaskExecution(long executionid, String taskName, Date startTime, List<String> arguments,
 			String externalExecutionId, Long parentExecutionId);
 

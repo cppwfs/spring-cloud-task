@@ -37,6 +37,7 @@ import org.springframework.cloud.task.repository.support.SimpleTaskRepository;
 import org.springframework.cloud.task.repository.support.TaskRepositoryInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
@@ -86,6 +87,8 @@ public class SimpleTaskAutoConfiguration {
 		return (SimpleTaskRepository) this.taskRepository;
 	}
 
+	@Conditional(NoTransactionManagerProperty.class)
+	@Bean
 	public PlatformTransactionManager springCloudTaskTransactionManager() {
 		return this.platformTransactionManager;
 	}
